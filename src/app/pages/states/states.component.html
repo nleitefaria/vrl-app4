@@ -1,0 +1,24 @@
+<nz-table
+  #basicTable
+  [nzData]="states()"
+  [nzLoading]="isLoading()"
+  nzBordered
+>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Area</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  @for (state of basicTable.data; track state.id) {
+  <tr>
+    <td>{{ state.id }}</td>
+    <td>{{ state.name }}</td>
+    <td>{{ state.area }}</td>
+  </tr>
+  }
+  </tbody>
+</nz-table>
