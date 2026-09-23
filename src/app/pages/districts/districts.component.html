@@ -1,0 +1,30 @@
+<nz-table
+  #basicTable
+  [nzData]="districts()"
+  [nzLoading]="isLoading()"
+  nzBordered
+>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>State</th>
+      <th>Type</th>
+      <th>Name</th>
+      <th>NUTS3</th>
+      <th>Area</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (district of basicTable.data; track district.id) {
+      <tr>
+        <td>{{ district.id }}</td>
+        <td>{{ district.state }}</td>
+        <td>{{ district.type }}</td>
+        <td>{{ district.name }}</td>
+        <td>{{ district.nuts3 }}</td>
+        <td>{{ district.area }}</td>
+      </tr>
+    }
+  </tbody>
+</nz-table>
