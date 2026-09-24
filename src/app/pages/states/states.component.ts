@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { NzTableModule } from 'ng-zorro-antd/table';
 
@@ -23,10 +23,12 @@ interface StateResponse {
   styles: ``
 })
 export class StatesComponent {
+  protected readonly pageSize = 16;
+  protected readonly pageIndex = signal(1);
 
   protected readonly statesResource = httpResource<StateResponse>(
     () => ({
-      url: 'https://api.deutschland-api.dev/state'
+      url: `https://api.deutschland-api.dev/state?startIndex=${(this.pageIndex() - 1) * this.pageSize}&itemsPerPage=${this.pageSize}`
     }),
     {
       defaultValue: {
@@ -42,6 +44,12 @@ export class StatesComponent {
     const response = this.statesResource.value();
     return response?.entries ?? [];
   });
+  readonly totalResults = computed(() => this.statesResource.value()?.totalResults ?? 0);
+
+  protected onPageIndexChange(pageIndex: number): void {
+    this.pageIndex.set(pageIndex);
+  }
+
   protected readonly error = this.statesResource.error;
   protected readonly isLoading = this.statesResource.isLoading;
 }
