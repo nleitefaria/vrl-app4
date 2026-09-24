@@ -2,6 +2,11 @@
   #basicTable
   [nzData]="districts()"
   [nzLoading]="isLoading()"
+  [nzFrontPagination]="false"
+  [nzPageIndex]="pageIndex()"
+  [nzPageSize]="pageSize"
+  [nzTotal]="totalResults()"
+  (nzPageIndexChange)="onPageIndexChange($event)"
   nzBordered
 >
   <thead>
