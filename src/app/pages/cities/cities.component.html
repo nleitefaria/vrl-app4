@@ -1,0 +1,35 @@
+<nz-table
+  #basicTable
+  [nzData]="cities()"
+  [nzLoading]="isLoading()"
+  [nzFrontPagination]="false"
+  [nzPageIndex]="pageIndex()"
+  [nzPageSize]="pageSize"
+  [nzTotal]="totalResults()"
+  (nzPageIndexChange)="onPageIndexChange($event)"
+  nzBordered
+>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>State</th>
+      <th>District</th>
+      <th>Name</th>
+      <th>ZIP code</th>
+      <th>Area</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (city of basicTable.data; track city.id) {
+      <tr>
+        <td>{{ city.id }}</td>
+        <td>{{ city.state }}</td>
+        <td>{{ city.district }}</td>
+        <td>{{ city.name }}</td>
+        <td>{{ city.zipCode }}</td>
+        <td>{{ city.area }}</td>
+      </tr>
+    }
+  </tbody>
+</nz-table>

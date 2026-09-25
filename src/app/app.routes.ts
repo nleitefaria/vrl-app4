@@ -10,4 +10,8 @@ export const routes: Routes = [
     path: 'districts',
     loadChildren: () => import('./pages/districts/districts.routes').then((m) => m.DISTRICTS_ROUTES),
   },
+  {
+    path: 'cities',
+    loadChildren: () => import('./pages/cities/cities.routes').then((m) => m.CITIES_ROUTES),
+  },
 ];
