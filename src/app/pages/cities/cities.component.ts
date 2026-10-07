@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, resource, signal } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { NzTableModule } from 'ng-zorro-antd/table';
 
@@ -19,6 +19,10 @@ interface CityResponse {
   startIndex: number;
   itemsPerPage: number;
   entries: City[];
+}
+
+interface District {
+  name: string;
 }
 
 @Component({
@@ -51,11 +55,48 @@ export class CitiesComponent {
     return response?.entries ?? [];
   });
   readonly totalResults = computed(() => this.citiesResource.value()?.totalResults ?? 0);
+  protected readonly districtNamesResource = resource<Record<string, string>, string[]>({
+    params: () => [...new Set(this.cities().map((city) => this.districtId(city)))],
+    defaultValue: {},
+    loader: async ({ params, abortSignal }) => {
+      const districts = await Promise.all(
+        params.map(async (id) => {
+          const response = await fetch(`https://api.deutschland-api.dev/district/${id}`, {
+            signal: abortSignal,
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to load district ${id}: ${response.status}`);
+          }
+
+          const district = (await response.json()) as District;
+          return [id, district.name] as const;
+        })
+      );
+
+      return Object.fromEntries(districts);
+    },
+  });
+  readonly cityDistrictNames = computed(() => {
+    const names = this.districtNamesResource.value();
+    return Object.fromEntries(
+      this.cities().map((city) => [
+        city.id,
+        names[this.districtId(city)] ?? city.district,
+      ])
+    );
+  });
+  protected readonly error = computed(
+    () => this.citiesResource.error() ?? this.districtNamesResource.error()
+  );
+  protected readonly isLoading = computed(
+    () => this.citiesResource.isLoading() || this.districtNamesResource.isLoading()
+  );
 
   protected onPageIndexChange(pageIndex: number): void {
     this.pageIndex.set(pageIndex);
   }
 
-  protected readonly error = this.citiesResource.error;
-  protected readonly isLoading = this.citiesResource.isLoading;
+  protected districtId(city: City): string {
+    return `${city.state}${city.rb}${city.district.padStart(2, '0')}`;
+  }
 }
