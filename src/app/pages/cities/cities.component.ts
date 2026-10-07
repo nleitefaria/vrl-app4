@@ -21,6 +21,15 @@ interface CityResponse {
   entries: City[];
 }
 
+interface State {
+  id: string;
+  name: string;
+}
+
+interface StateResponse {
+  entries: State[];
+}
+
 @Component({
   selector: 'app-cities',
   standalone: true,
@@ -46,10 +55,24 @@ export class CitiesComponent {
     }
   );
 
+  protected readonly statesResource = httpResource<StateResponse>(
+    () => ({
+      url: 'https://api.deutschland-api.dev/state?startIndex=0&itemsPerPage=16',
+    }),
+    {
+      defaultValue: {
+        entries: [],
+      },
+    }
+  );
+
   readonly cities = computed(() => {
     const response = this.citiesResource.value();
     return response?.entries ?? [];
   });
+  readonly stateNames = computed(
+    () => new Map(this.statesResource.value()?.entries.map((state) => [state.id, state.name]))
+  );
   readonly totalResults = computed(() => this.citiesResource.value()?.totalResults ?? 0);
 
   protected onPageIndexChange(pageIndex: number): void {
