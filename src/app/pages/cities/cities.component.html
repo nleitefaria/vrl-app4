@@ -1,3 +1,7 @@
+@if (error(); as loadError) {
+  <p role="alert">Could not load city data: {{ loadError.message }}</p>
+}
+
 <nz-table
   #basicTable
   [nzData]="cities()"
@@ -24,8 +28,8 @@
     @for (city of basicTable.data; track city.id) {
       <tr>
         <td>{{ city.id }}</td>
-        <td>{{ city.state }}</td>
-        <td>{{ city.district }}</td>
+        <td>{{ stateNames().get(city.state) ?? city.state }}</td>
+        <td>{{ cityDistrictNames()[city.id] }}</td>
         <td>{{ city.name }}</td>
         <td>{{ city.zipCode }}</td>
         <td>{{ city.area }}</td>
