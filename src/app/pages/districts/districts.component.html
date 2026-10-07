@@ -24,7 +24,7 @@
     @for (district of basicTable.data; track district.id) {
       <tr>
         <td>{{ district.id }}</td>
-        <td>{{ district.state }}</td>
+        <td>{{ stateNames().get(district.state) ?? district.state }}</td>
         <td>{{ district.type }}</td>
         <td>{{ district.name }}</td>
         <td>{{ district.nuts3 }}</td>

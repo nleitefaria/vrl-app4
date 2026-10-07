@@ -18,6 +18,15 @@ interface DistrictResponse {
   entries: District[];
 }
 
+interface State {
+  id: string;
+  name: string;
+}
+
+interface StateResponse {
+  entries: State[];
+}
+
 @Component({
   selector: 'app-districts',
   standalone: true,
@@ -43,10 +52,24 @@ export class DistrictsComponent {
     }
   );
 
+  protected readonly statesResource = httpResource<StateResponse>(
+    () => ({
+      url: 'https://api.deutschland-api.dev/state?startIndex=0&itemsPerPage=16',
+    }),
+    {
+      defaultValue: {
+        entries: [],
+      },
+    }
+  );
+
   readonly districts = computed(() => {
     const response = this.districtsResource.value();
     return response?.entries ?? [];
   });
+  readonly stateNames = computed(
+    () => new Map(this.statesResource.value()?.entries.map((state) => [state.id, state.name]))
+  );
   readonly totalResults = computed(() => this.districtsResource.value()?.totalResults ?? 0);
 
   protected onPageIndexChange(pageIndex: number): void {
