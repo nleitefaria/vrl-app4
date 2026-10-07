@@ -25,6 +25,15 @@ interface District {
   name: string;
 }
 
+interface State {
+  id: string;
+  name: string;
+}
+
+interface StateResponse {
+  entries: State[];
+}
+
 @Component({
   selector: 'app-cities',
   standalone: true,
@@ -50,11 +59,25 @@ export class CitiesComponent {
     }
   );
 
+  protected readonly statesResource = httpResource<StateResponse>(
+    () => ({
+      url: 'https://api.deutschland-api.dev/state?startIndex=0&itemsPerPage=16',
+    }),
+    {
+      defaultValue: {
+        entries: [],
+      },
+    }
+  );
+
   readonly cities = computed(() => {
     const response = this.citiesResource.value();
     return response?.entries ?? [];
   });
   readonly totalResults = computed(() => this.citiesResource.value()?.totalResults ?? 0);
+  readonly stateNames = computed(
+    () => new Map(this.statesResource.value()?.entries.map((state) => [state.id, state.name]))
+  );
   protected readonly districtNamesResource = resource<Record<string, string>, string[]>({
     params: () => [...new Set(this.cities().map((city) => this.districtId(city)))],
     defaultValue: {},
@@ -86,10 +109,16 @@ export class CitiesComponent {
     );
   });
   protected readonly error = computed(
-    () => this.citiesResource.error() ?? this.districtNamesResource.error()
+    () =>
+      this.citiesResource.error() ??
+      this.statesResource.error() ??
+      this.districtNamesResource.error()
   );
   protected readonly isLoading = computed(
-    () => this.citiesResource.isLoading() || this.districtNamesResource.isLoading()
+    () =>
+      this.citiesResource.isLoading() ||
+      this.statesResource.isLoading() ||
+      this.districtNamesResource.isLoading()
   );
 
   protected onPageIndexChange(pageIndex: number): void {
