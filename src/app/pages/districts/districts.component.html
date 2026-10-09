@@ -1,3 +1,27 @@
+<form nz-form nzLayout="inline" style="margin-bottom: 24px" [formGroup]="validateForm" (ngSubmit)="submitForm()">
+  <nz-form-item>
+    <nz-form-label>State</nz-form-label>
+    <nz-form-control nzErrorTip="Please select an option">
+      <nz-select
+        formControlName="myCombobox"
+        style="width: 260px"
+        nzShowSearch
+        nzAllowClear
+        nzPlaceholder="Select or search">
+        @for (option of listOfOption(); track option.value) {
+          <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+        }
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control>
+      <button nz-button nzType="primary">Search</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
+
 <nz-table
   #basicTable
   [nzData]="districts()"
@@ -12,9 +36,9 @@
   <thead>
     <tr>
       <th>ID</th>
+      <th>Name</th>
       <th>State</th>
       <th>Type</th>
-      <th>Name</th>
       <th>NUTS3</th>
       <th>Area</th>
     </tr>
@@ -24,9 +48,9 @@
     @for (district of basicTable.data; track district.id) {
       <tr>
         <td>{{ district.id }}</td>
+        <td>{{ district.name }}</td>
         <td>{{ stateNames().get(district.state) ?? district.state }}</td>
         <td>{{ district.type }}</td>
-        <td>{{ district.name }}</td>
         <td>{{ district.nuts3 }}</td>
         <td>{{ district.area }}</td>
       </tr>
