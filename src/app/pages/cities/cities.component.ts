@@ -1,6 +1,11 @@
 import { Component, computed, resource, signal } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { httpResource } from '@angular/common/http';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzButtonComponent } from 'ng-zorro-antd/button';
 
 interface City {
   id: number;
@@ -37,17 +42,44 @@ interface StateResponse {
 @Component({
   selector: 'app-cities',
   standalone: true,
-  imports: [NzTableModule],
+  imports: [
+    NzTableModule,
+    NzFormModule,
+    NzAutocompleteModule,
+    NzSelectModule,
+    ReactiveFormsModule,
+    NzButtonComponent,
+  ],
   templateUrl: './cities.component.html',
   styles: ``
 })
 export class CitiesComponent {
+  validateForm!: FormGroup;
+
+  readonly listOfOption = computed(() =>
+    (this.statesResource.value()?.entries ?? []).map((state) => ({
+      label: state.name,
+      value: state.id,
+    }))
+  );
+
+  chosenStateId = signal('');
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.validateForm = this.fb.group({
+      myCombobox: [null, []],
+    });
+  }
+
   protected readonly pageSize = 16;
   protected readonly pageIndex = signal(1);
 
   protected readonly citiesResource = httpResource<CityResponse>(
     () => ({
       url: `https://api.deutschland-api.dev/city?startIndex=${(this.pageIndex() - 1) * this.pageSize}&itemsPerPage=${this.pageSize}`,
+      params: { state: this.chosenStateId() },
     }),
     {
       defaultValue: {
@@ -127,5 +159,9 @@ export class CitiesComponent {
 
   protected districtId(city: City): string {
     return `${city.state}${city.rb}${city.district.padStart(2, '0')}`;
+  }
+
+  submitForm(): void {
+    this.chosenStateId.set(this.validateForm.get('myCombobox')?.value ?? '');
   }
 }
