@@ -26,6 +26,19 @@ interface CityResponse {
   entries: City[];
 }
 
+interface DistrictOption {
+  id: string;
+  state: string;
+  name: string;
+}
+
+interface DistrictResponse {
+  totalResults: number;
+  startIndex: number;
+  itemsPerPage: number;
+  entries: DistrictOption[];
+}
+
 interface District {
   name: string;
 }
@@ -62,14 +75,22 @@ export class CitiesComponent {
       value: state.id,
     }))
   );
+  readonly listOfDistrictOption = computed(() =>
+    (this.districtsResource.value() ?? []).map((district) => ({
+      label: `${district.name} (${this.stateNames().get(district.state) ?? district.state})`,
+      value: district.id,
+    }))
+  );
 
   chosenStateId = signal('');
+  chosenDistrictId = signal('');
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({
       myCombobox: [null, []],
+      districtCombobox: [null, []],
     });
   }
 
@@ -102,11 +123,93 @@ export class CitiesComponent {
     }
   );
 
-  readonly cities = computed(() => {
-    const response = this.citiesResource.value();
-    return response?.entries ?? [];
+  protected readonly districtsResource = resource<DistrictOption[], string>({
+    params: () => 'districts',
+    defaultValue: [],
+    loader: async ({ abortSignal }) => {
+      const loadPage = async (startIndex: number): Promise<DistrictResponse> => {
+        const response = await fetch(
+          `https://api.deutschland-api.dev/district?startIndex=${startIndex}&itemsPerPage=${this.pageSize}`,
+          { signal: abortSignal }
+        );
+        if (!response.ok) {
+          throw new Error(`Failed to load districts: ${response.status}`);
+        }
+
+        return (await response.json()) as DistrictResponse;
+      };
+
+      const firstPage = await loadPage(0);
+      const pageCount = Math.ceil(firstPage.totalResults / firstPage.itemsPerPage);
+      const remainingPages = await Promise.all(
+        Array.from({ length: pageCount - 1 }, (_, index) =>
+          loadPage((index + 1) * firstPage.itemsPerPage)
+        )
+      );
+
+      return [firstPage, ...remainingPages].flatMap((page) => page.entries);
+    },
   });
-  readonly totalResults = computed(() => this.citiesResource.value()?.totalResults ?? 0);
+  protected readonly filteredCitiesResource = resource<
+    City[],
+    { districtId: string; stateId: string } | undefined
+  >({
+    params: () => {
+      const districtId = this.chosenDistrictId();
+      return districtId ? { districtId, stateId: this.chosenStateId() } : undefined;
+    },
+    defaultValue: [],
+    loader: async ({ params, abortSignal }) => {
+      const stateId = params.districtId.slice(0, 2);
+      if (params.stateId && params.stateId !== stateId) {
+        return [];
+      }
+
+      const districtCode = params.districtId.slice(3);
+      const loadPage = async (startIndex: number): Promise<CityResponse> => {
+        const query = new URLSearchParams({
+          startIndex: String(startIndex),
+          itemsPerPage: String(this.pageSize),
+          state: stateId,
+          district: districtCode,
+        });
+        const response = await fetch(`https://api.deutschland-api.dev/city?${query}`, {
+          signal: abortSignal,
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to load cities: ${response.status}`);
+        }
+
+        return (await response.json()) as CityResponse;
+      };
+
+      const firstPage = await loadPage(0);
+      const pageCount = Math.ceil(firstPage.totalResults / firstPage.itemsPerPage);
+      const remainingPages = await Promise.all(
+        Array.from({ length: pageCount - 1 }, (_, index) =>
+          loadPage((index + 1) * firstPage.itemsPerPage)
+        )
+      );
+
+      return [firstPage, ...remainingPages]
+        .flatMap((page) => page.entries)
+        .filter((city) => this.districtId(city) === params.districtId);
+    },
+  });
+  readonly cities = computed(() => {
+    if (this.chosenDistrictId()) {
+      const start = (this.pageIndex() - 1) * this.pageSize;
+      return this.filteredCitiesResource
+        .value()
+        .slice(start, start + this.pageSize);
+    }
+    return this.citiesResource.value()?.entries ?? [];
+  });
+  readonly totalResults = computed(() =>
+    this.chosenDistrictId()
+      ? this.filteredCitiesResource.value().length
+      : this.citiesResource.value()?.totalResults ?? 0
+  );
   readonly stateNames = computed(
     () => new Map(this.statesResource.value()?.entries.map((state) => [state.id, state.name]))
   );
@@ -144,13 +247,17 @@ export class CitiesComponent {
     () =>
       this.citiesResource.error() ??
       this.statesResource.error() ??
-      this.districtNamesResource.error()
+      this.districtNamesResource.error() ??
+      this.districtsResource.error() ??
+      this.filteredCitiesResource.error()
   );
   protected readonly isLoading = computed(
     () =>
       this.citiesResource.isLoading() ||
       this.statesResource.isLoading() ||
-      this.districtNamesResource.isLoading()
+      this.districtNamesResource.isLoading() ||
+      this.districtsResource.isLoading() ||
+      this.filteredCitiesResource.isLoading()
   );
 
   protected onPageIndexChange(pageIndex: number): void {
@@ -163,5 +270,7 @@ export class CitiesComponent {
 
   submitForm(): void {
     this.chosenStateId.set(this.validateForm.get('myCombobox')?.value ?? '');
+    this.chosenDistrictId.set(this.validateForm.get('districtCombobox')?.value ?? '');
+    this.pageIndex.set(1);
   }
 }
