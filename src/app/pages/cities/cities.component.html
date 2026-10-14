@@ -1,5 +1,5 @@
 @if (error(); as loadError) {
-  <p role="alert">Could not load city data: {{ loadError.message }}</p>
+  <p role="alert">Could not load city or filter data: {{ loadError.message }}</p>
 }
 
 <form
@@ -20,6 +20,23 @@
         nzPlaceHolder="Select or search"
       >
         @for (option of listOfOption(); track option.value) {
+          <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+        }
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label>District</nz-form-label>
+    <nz-form-control>
+      <nz-select
+        formControlName="districtCombobox"
+        style="width: 260px"
+        nzShowSearch
+        nzAllowClear
+        nzPlaceHolder="Select or search"
+      >
+        @for (option of listOfDistrictOption(); track option.value) {
           <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
         }
       </nz-select>
