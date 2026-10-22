@@ -6,6 +6,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 interface City {
   id: number;
@@ -62,9 +63,10 @@ interface StateResponse {
     NzSelectModule,
     ReactiveFormsModule,
     NzButtonComponent,
+    NzInputModule
   ],
   templateUrl: './cities.component.html',
-  styles: ``
+  styles: ``,
 })
 export class CitiesComponent {
   validateForm!: FormGroup;
@@ -73,22 +75,24 @@ export class CitiesComponent {
     (this.statesResource.value()?.entries ?? []).map((state) => ({
       label: state.name,
       value: state.id,
-    }))
+    })),
   );
   readonly listOfDistrictOption = computed(() =>
     (this.districtsResource.value() ?? []).map((district) => ({
       label: `${district.name} (${this.stateNames().get(district.state) ?? district.state})`,
       value: district.id,
-    }))
+    })),
   );
 
   chosenStateId = signal('');
   chosenDistrictId = signal('');
+  name = signal('');
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.validateForm = this.fb.group({
+      name: '',
       myCombobox: [null, []],
       districtCombobox: [null, []],
     });
@@ -100,7 +104,11 @@ export class CitiesComponent {
   protected readonly citiesResource = httpResource<CityResponse>(
     () => ({
       url: `https://api.deutschland-api.dev/city?startIndex=${(this.pageIndex() - 1) * this.pageSize}&itemsPerPage=${this.pageSize}`,
-      params: { state: this.chosenStateId() },
+      params: {
+        state: this.chosenStateId(),
+        district: this.chosenDistrictId(),
+        name: this.name()
+      },
     }),
     {
       defaultValue: {
@@ -109,7 +117,7 @@ export class CitiesComponent {
         itemsPerPage: 0,
         entries: [],
       },
-    }
+    },
   );
 
   protected readonly statesResource = httpResource<StateResponse>(
@@ -120,7 +128,7 @@ export class CitiesComponent {
       defaultValue: {
         entries: [],
       },
-    }
+    },
   );
 
   protected readonly districtsResource = resource<DistrictOption[], string>({
@@ -130,7 +138,7 @@ export class CitiesComponent {
       const loadPage = async (startIndex: number): Promise<DistrictResponse> => {
         const response = await fetch(
           `https://api.deutschland-api.dev/district?startIndex=${startIndex}&itemsPerPage=${this.pageSize}`,
-          { signal: abortSignal }
+          { signal: abortSignal },
         );
         if (!response.ok) {
           throw new Error(`Failed to load districts: ${response.status}`);
@@ -143,8 +151,8 @@ export class CitiesComponent {
       const pageCount = Math.ceil(firstPage.totalResults / firstPage.itemsPerPage);
       const remainingPages = await Promise.all(
         Array.from({ length: pageCount - 1 }, (_, index) =>
-          loadPage((index + 1) * firstPage.itemsPerPage)
-        )
+          loadPage((index + 1) * firstPage.itemsPerPage),
+        ),
       );
 
       return [firstPage, ...remainingPages].flatMap((page) => page.entries);
@@ -187,8 +195,8 @@ export class CitiesComponent {
       const pageCount = Math.ceil(firstPage.totalResults / firstPage.itemsPerPage);
       const remainingPages = await Promise.all(
         Array.from({ length: pageCount - 1 }, (_, index) =>
-          loadPage((index + 1) * firstPage.itemsPerPage)
-        )
+          loadPage((index + 1) * firstPage.itemsPerPage),
+        ),
       );
 
       return [firstPage, ...remainingPages]
@@ -199,19 +207,17 @@ export class CitiesComponent {
   readonly cities = computed(() => {
     if (this.chosenDistrictId()) {
       const start = (this.pageIndex() - 1) * this.pageSize;
-      return this.filteredCitiesResource
-        .value()
-        .slice(start, start + this.pageSize);
+      return this.filteredCitiesResource.value().slice(start, start + this.pageSize);
     }
     return this.citiesResource.value()?.entries ?? [];
   });
   readonly totalResults = computed(() =>
     this.chosenDistrictId()
       ? this.filteredCitiesResource.value().length
-      : this.citiesResource.value()?.totalResults ?? 0
+      : (this.citiesResource.value()?.totalResults ?? 0),
   );
   readonly stateNames = computed(
-    () => new Map(this.statesResource.value()?.entries.map((state) => [state.id, state.name]))
+    () => new Map(this.statesResource.value()?.entries.map((state) => [state.id, state.name])),
   );
   protected readonly districtNamesResource = resource<Record<string, string>, string[]>({
     params: () => [...new Set(this.cities().map((city) => this.districtId(city)))],
@@ -228,7 +234,7 @@ export class CitiesComponent {
 
           const district = (await response.json()) as District;
           return [id, district.name] as const;
-        })
+        }),
       );
 
       return Object.fromEntries(districts);
@@ -237,10 +243,7 @@ export class CitiesComponent {
   readonly cityDistrictNames = computed(() => {
     const names = this.districtNamesResource.value();
     return Object.fromEntries(
-      this.cities().map((city) => [
-        city.id,
-        names[this.districtId(city)] ?? city.district,
-      ])
+      this.cities().map((city) => [city.id, names[this.districtId(city)] ?? city.district]),
     );
   });
   protected readonly error = computed(
@@ -249,7 +252,7 @@ export class CitiesComponent {
       this.statesResource.error() ??
       this.districtNamesResource.error() ??
       this.districtsResource.error() ??
-      this.filteredCitiesResource.error()
+      this.filteredCitiesResource.error(),
   );
   protected readonly isLoading = computed(
     () =>
@@ -257,7 +260,7 @@ export class CitiesComponent {
       this.statesResource.isLoading() ||
       this.districtNamesResource.isLoading() ||
       this.districtsResource.isLoading() ||
-      this.filteredCitiesResource.isLoading()
+      this.filteredCitiesResource.isLoading(),
   );
 
   protected onPageIndexChange(pageIndex: number): void {
@@ -271,6 +274,7 @@ export class CitiesComponent {
   submitForm(): void {
     this.chosenStateId.set(this.validateForm.get('myCombobox')?.value ?? '');
     this.chosenDistrictId.set(this.validateForm.get('districtCombobox')?.value ?? '');
+    this.name.set(this.validateForm.get('name')?.value ?? '');
     this.pageIndex.set(1);
   }
 }

@@ -9,20 +9,17 @@
   [formGroup]="validateForm"
   (ngSubmit)="submitForm()"
 >
+
   <nz-form-item>
-    <nz-form-label>State</nz-form-label>
-    <nz-form-control nzErrorTip="Please select an option">
-      <nz-select
-        formControlName="myCombobox"
+    <nz-form-label>Name</nz-form-label>
+    <nz-form-control>
+      <input
+        nz-input
+        type="text"
+        formControlName="name"
+        placeholder="Enter name"
         style="width: 260px"
-        nzShowSearch
-        nzAllowClear
-        nzPlaceHolder="Select or search"
-      >
-        @for (option of listOfOption(); track option.value) {
-          <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
-        }
-      </nz-select>
+      />
     </nz-form-control>
   </nz-form-item>
 
@@ -37,6 +34,23 @@
         nzPlaceHolder="Select or search"
       >
         @for (option of listOfDistrictOption(); track option.value) {
+          <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+        }
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label>State</nz-form-label>
+    <nz-form-control nzErrorTip="Please select an option">
+      <nz-select
+        formControlName="myCombobox"
+        style="width: 260px"
+        nzShowSearch
+        nzAllowClear
+        nzPlaceHolder="Select or search"
+      >
+        @for (option of listOfOption(); track option.value) {
           <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
         }
       </nz-select>
@@ -63,10 +77,9 @@
 >
   <thead>
     <tr>
-      <th>ID</th>
-      <th>State</th>
-      <th>District</th>
       <th>Name</th>
+      <th>District</th>
+      <th>State</th>
       <th>ZIP code</th>
       <th>Area</th>
     </tr>
@@ -75,10 +88,9 @@
   <tbody>
     @for (city of basicTable.data; track city.id) {
       <tr>
-        <td>{{ city.id }}</td>
-        <td>{{ stateNames().get(city.state) ?? city.state }}</td>
-        <td>{{ cityDistrictNames()[city.id] }}</td>
         <td>{{ city.name }}</td>
+        <td>{{ cityDistrictNames()[city.id] }}</td>
+        <td>{{ stateNames().get(city.state) ?? city.state }}</td>
         <td>{{ city.zipCode }}</td>
         <td>{{ city.area }}</td>
       </tr>
