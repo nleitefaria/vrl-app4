@@ -1,0 +1,16 @@
+@if (error(); as loadError) {
+  <p role="alert">Could not load highways: {{ loadError.message }}</p>
+}
+
+<nz-select
+  aria-label="Autobahn"
+  style="width: 260px"
+  nzShowSearch
+  nzAllowClear
+  nzPlaceHolder="Select or search"
+  [nzLoading]="isLoading()"
+>
+  @for (autobahn of autobahns(); track autobahn) {
+    <nz-option [nzValue]="autobahn" [nzLabel]="autobahn"></nz-option>
+  }
+</nz-select>
