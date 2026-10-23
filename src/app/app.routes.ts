@@ -14,4 +14,8 @@ export const routes: Routes = [
     path: 'cities',
     loadChildren: () => import('./pages/cities/cities.routes').then((m) => m.CITIES_ROUTES),
   },
+  {
+    path: 'highways',
+    loadChildren: () => import('./pages/highways/highways.routes').then((m) => m.HIGHWAYS_ROUTES),
+  },
 ];
