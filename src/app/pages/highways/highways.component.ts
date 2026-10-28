@@ -30,7 +30,7 @@ interface AutobahnResponse {
 export class HighwaysComponent {
   validateForm: FormGroup;
 
-  highwayId = signal("a");
+  highwayId = signal('');
 
   private hasInitializedSelection = false;
 
@@ -47,6 +47,7 @@ export class HighwaysComponent {
 
       this.validateForm.get('hwId')?.setValue(options[0]);
       this.hasInitializedSelection = true;
+      this.highwayId.set(options[0]);
     });
   }
 
