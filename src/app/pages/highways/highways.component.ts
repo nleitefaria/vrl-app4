@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { httpResource } from '@angular/common/http';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
@@ -28,15 +28,25 @@ interface AutobahnResponse {
   styles: ``,
 })
 export class HighwaysComponent {
-  validateForm!: FormGroup;
+  validateForm: FormGroup;
 
   highwayId = signal("a");
 
-  constructor(private fb: FormBuilder) {}
+  private hasInitializedSelection = false;
 
-  ngOnInit(): void {
+  constructor(private fb: FormBuilder) {
     this.validateForm = this.fb.group({
       hwId: [null, []],
+    });
+
+    effect(() => {
+      const options = this.autobahns();
+      if (options.length === 0 || this.hasInitializedSelection) {
+        return;
+      }
+
+      this.validateForm.get('hwId')?.setValue(options[0]);
+      this.hasInitializedSelection = true;
     });
   }
 
