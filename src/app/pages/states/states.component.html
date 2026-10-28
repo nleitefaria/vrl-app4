@@ -1,11 +1,11 @@
 <nz-table
   #basicTable
-  [nzData]="states()"
-  [nzLoading]="isLoading()"
+  [nzData]="store.states()"
+  [nzLoading]="store.isLoading()"
   [nzFrontPagination]="false"
-  [nzPageIndex]="pageIndex()"
-  [nzPageSize]="pageSize"
-  [nzTotal]="totalResults()"
+  [nzPageIndex]="store.pageIndex()"
+  [nzPageSize]="store.pageSize()"
+  [nzTotal]="store.totalResults()"
   (nzPageIndexChange)="onPageIndexChange($event)"
   nzBordered
 >
