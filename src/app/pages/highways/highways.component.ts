@@ -5,6 +5,7 @@ import { NzColDirective, NzRowDirective } from 'ng-zorro-antd/grid';
 import { NzFormControlComponent, NzFormDirective, NzFormItemComponent, NzFormLabelComponent } from 'ng-zorro-antd/form';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 
 interface AutobahnResponse {
   entries: string[];
@@ -23,6 +24,7 @@ interface AutobahnResponse {
     NzRowDirective,
     ReactiveFormsModule,
     NzButtonComponent,
+    NzTabsModule
   ],
   templateUrl: './highways.component.html',
   styles: ``,
@@ -30,7 +32,7 @@ interface AutobahnResponse {
 export class HighwaysComponent {
   validateForm: FormGroup;
 
-  highwayId = signal("a");
+  highwayId = signal('a');
 
   private hasInitializedSelection = false;
 
@@ -47,6 +49,7 @@ export class HighwaysComponent {
 
       this.validateForm.get('hwId')?.setValue(options[0]);
       this.hasInitializedSelection = true;
+      this.highwayId.set(options[0]);
     });
   }
 
