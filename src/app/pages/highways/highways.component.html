@@ -1,26 +1,27 @@
-@if (error(); as loadError) {
+@if (store.error(); as loadError) {
   <p role="alert">Could not load highways: {{ loadError.message }}</p>
 }
 <form
   nz-form
   nzLayout="inline"
   style="margin-bottom: 24px"
-  [formGroup]="validateForm"
   (ngSubmit)="submitForm()"
 >
   <nz-form-item>
     <nz-form-label>Highway</nz-form-label>
     <nz-form-control nzErrorTip="Please select an option">
       <nz-select
-        formControlName="hwId"
+        [ngModel]="store.selectedHighway()"
+        (ngModelChange)="store.setSelectedHighway($event)"
+        [ngModelOptions]="{ standalone: true }"
         aria-label="Autobahn"
         style="width: 260px"
         nzShowSearch
         nzAllowClear
         nzPlaceHolder="Select or search"
-        [nzLoading]="isLoading()"
+        [nzLoading]="store.isLoading()"
       >
-        @for (autobahn of autobahns(); track autobahn) {
+        @for (autobahn of store.autobahns(); track autobahn) {
           <nz-option [nzValue]="autobahn" [nzLabel]="autobahn"></nz-option>
         }
       </nz-select>
@@ -34,7 +35,7 @@
   </nz-form-item>
 </form>
 
-{{highwayId()}}
+{{ store.highwayId() }}
 
 <nz-tabs nzType="card">
 

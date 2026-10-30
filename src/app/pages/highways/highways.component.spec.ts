@@ -26,11 +26,14 @@ describe('HighwaysComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    const highwayControl = fixture.componentInstance.validateForm.get('hwId');
-    expect(highwayControl?.value).toBe('A1');
+    const component = fixture.componentInstance;
+    expect(component.store.selectedHighway()).toBe('A1');
+    expect(component.store.highwayId()).toBe('A1');
 
-    highwayControl?.setValue('A2');
-    fixture.detectChanges();
-    expect(highwayControl?.value).toBe('A2');
+    component.store.setSelectedHighway('A2');
+    expect(component.store.highwayId()).toBe('A1');
+
+    component.submitForm();
+    expect(component.store.highwayId()).toBe('A2');
   });
 });
