@@ -1,4 +1,4 @@
-@if (error(); as loadError) {
+@if (store.error(); as loadError) {
   <p role="alert">Could not load city or filter data: {{ loadError.message }}</p>
 }
 
@@ -33,7 +33,7 @@
         nzAllowClear
         nzPlaceHolder="Select or search"
       >
-        @for (option of listOfDistrictOption(); track option.value) {
+        @for (option of store.districtOptions(); track option.value) {
           <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
         }
       </nz-select>
@@ -50,7 +50,7 @@
         nzAllowClear
         nzPlaceHolder="Select or search"
       >
-        @for (option of listOfOption(); track option.value) {
+        @for (option of store.stateOptions(); track option.value) {
           <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
         }
       </nz-select>
@@ -66,12 +66,12 @@
 
 <nz-table
   #basicTable
-  [nzData]="cities()"
-  [nzLoading]="isLoading()"
+  [nzData]="store.cities()"
+  [nzLoading]="store.isLoading()"
   [nzFrontPagination]="false"
-  [nzPageIndex]="pageIndex()"
-  [nzPageSize]="pageSize"
-  [nzTotal]="totalResults()"
+  [nzPageIndex]="store.pageIndex()"
+  [nzPageSize]="store.pageSize()"
+  [nzTotal]="store.totalResults()"
   (nzPageIndexChange)="onPageIndexChange($event)"
   nzBordered
 >
@@ -89,8 +89,8 @@
     @for (city of basicTable.data; track city.id) {
       <tr>
         <td>{{ city.name }}</td>
-        <td>{{ cityDistrictNames()[city.id] }}</td>
-        <td>{{ stateNames().get(city.state) ?? city.state }}</td>
+        <td>{{ store.cityDistrictNames()[city.id] }}</td>
+        <td>{{ store.stateNames().get(city.state) ?? city.state }}</td>
         <td>{{ city.zipCode }}</td>
         <td>{{ city.area }}</td>
       </tr>
