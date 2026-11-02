@@ -28,7 +28,7 @@ interface ChargingStationsResponse {
 }
 
 interface ParkingLorriesResponse {
-  parkingLorriesEntries: ParkingLorries[];
+  entries: ParkingLorries[];
 }
 
 export const ChargingStationsPlStore = signalStore(
@@ -63,7 +63,7 @@ export const ChargingStationsPlStore = signalStore(
         },
         {
           defaultValue: {
-            parkingLorriesEntries: [],
+            entries: [],
           },
         },
       ),
@@ -73,7 +73,7 @@ export const ChargingStationsPlStore = signalStore(
     chargingStations: computed(() => chargingStationsResource.value()?.entries ?? []),
     error: computed(() => chargingStationsResource.error()),
     isLoading: computed(() => chargingStationsResource.isLoading()),
-    parkingLorries: computed(() => parkingLorriesResource.value()?.parkingLorriesEntries ?? []),
+    parkingLorries: computed(() => parkingLorriesResource.value()?.entries ?? []),
     errorParkingLorriesEntries: computed(() => parkingLorriesResource.error()),
     isLoadingParkingLorriesEntries: computed(() => parkingLorriesResource.isLoading()),
   })),
