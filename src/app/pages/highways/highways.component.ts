@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { HighwaysStore } from './highways.store';
+import { ChargingStationsPlComponent } from '../charging-stations-parking-lorries/charging-stations-pl.component';
 
 @Component({
   selector: 'app-highways',
@@ -15,6 +16,7 @@ import { HighwaysStore } from './highways.store';
     FormsModule,
     NzButtonComponent,
     NzTabsModule,
+    ChargingStationsPlComponent,
   ],
   providers: [HighwaysStore],
   templateUrl: './highways.component.html',

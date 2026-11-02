@@ -35,12 +35,9 @@
   </nz-form-item>
 </form>
 
-{{ store.highwayId() }}
-
 <nz-tabs nzType="card">
-
     <nz-tab [nzTitle]="'Closures and warnings'">Content of Tab Pane tab1</nz-tab>
-    <nz-tab [nzTitle]="'Charging stations'">Content of Tab Pane tab2</nz-tab>
-    <nz-tab [nzTitle]="'Parking lorries'">Content of Tab Pane tab3</nz-tab>
-
+    <nz-tab [nzTitle]="'Charging stations and parking lorries'">
+      <app-charging-stations />
+    </nz-tab>
 </nz-tabs>
