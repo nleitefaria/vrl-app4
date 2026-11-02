@@ -6,12 +6,12 @@ import {
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { HighwaysStore } from '../highways/highways.store';
-import { ChargingStationsStore } from './charging-stations.store';
+import { ChargingStationsPlStore } from '././charging-stations-pl.store';
 
-describe('ChargingStationsStore', () => {
+describe('ChargingStationsPlStore', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), HighwaysStore, ChargingStationsStore],
+      providers: [provideHttpClient(), provideHttpClientTesting(), HighwaysStore, ChargingStationsPlStore],
     });
   });
 
@@ -29,7 +29,7 @@ describe('ChargingStationsStore', () => {
     });
     await TestBed.inject(ApplicationRef).whenStable();
 
-    const chargingStationsStore = TestBed.inject(ChargingStationsStore);
+    const chargingStationsStore = TestBed.inject(ChargingStationsPlStore);
     TestBed.tick();
 
     httpTesting
