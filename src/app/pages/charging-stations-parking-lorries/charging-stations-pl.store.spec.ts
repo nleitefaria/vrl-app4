@@ -6,12 +6,12 @@ import {
 import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { HighwaysStore } from '../highways/highways.store';
-import { ChargingStationsStore } from './charging-stations.store';
+import { ChargingStationsPlStore } from '././charging-stations-pl.store';
 
-describe('ChargingStationsStore', () => {
+describe('ChargingStationsPlStore', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), HighwaysStore, ChargingStationsStore],
+      providers: [provideHttpClient(), provideHttpClientTesting(), HighwaysStore, ChargingStationsPlStore],
     });
   });
 
@@ -19,7 +19,7 @@ describe('ChargingStationsStore', () => {
     TestBed.inject(HttpTestingController).verify();
   });
 
-  it('loads charging stations for the applied highway', async () => {
+  it('loads charging stations and parking lorries for the applied highway', async () => {
     const highwaysStore = TestBed.inject(HighwaysStore);
     const httpTesting = TestBed.inject(HttpTestingController);
     TestBed.tick();
@@ -29,12 +29,24 @@ describe('ChargingStationsStore', () => {
     });
     await TestBed.inject(ApplicationRef).whenStable();
 
-    const chargingStationsStore = TestBed.inject(ChargingStationsStore);
+    const chargingStationsStore = TestBed.inject(ChargingStationsPlStore);
     TestBed.tick();
 
     httpTesting
       .expectOne('https://api.deutschland-api.dev/autobahn/A1/charging_station')
       .flush({ entries: [] });
+    httpTesting
+      .expectOne('https://api.deutschland-api.dev/autobahn/A1/parking_lorry')
+      .flush({
+        entries: [
+          {
+            id: 'parking-1',
+            title: 'A1 | Test location',
+            description: ['Lorry spaces: 82'],
+            coordinate: { lat: '50.6', long: '6.7' },
+          },
+        ],
+      });
     TestBed.tick();
 
     highwaysStore.setSelectedHighway('A2');
@@ -52,6 +64,18 @@ describe('ChargingStationsStore', () => {
           },
         ],
       });
+    httpTesting
+      .expectOne('https://api.deutschland-api.dev/autobahn/A2/parking_lorry')
+      .flush({
+        entries: [
+          {
+            id: 'parking-2',
+            title: 'A2 | Test location',
+            description: ['Lorry spaces: 30'],
+            coordinate: { lat: '51.2', long: '7.1' },
+          },
+        ],
+      });
     await TestBed.inject(ApplicationRef).whenStable();
 
     expect(chargingStationsStore.highwayId()).toBe('A2');
@@ -63,6 +87,15 @@ describe('ChargingStationsStore', () => {
         coordinate: { lat: '50.6', long: '6.7' },
       },
     ]);
+    expect(chargingStationsStore.parkingLorries()).toEqual([
+      {
+        id: 'parking-2',
+        title: 'A2 | Test location',
+        description: ['Lorry spaces: 30'],
+        coordinate: { lat: '51.2', long: '7.1' },
+      },
+    ]);
     expect(chargingStationsStore.isLoading()).toBe(false);
+    expect(chargingStationsStore.isLoadingParkingLorriesEntries()).toBe(false);
   });
 });
