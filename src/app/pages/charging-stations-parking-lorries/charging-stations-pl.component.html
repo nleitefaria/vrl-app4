@@ -2,15 +2,16 @@
   <p role="alert">Could not load charging stations: {{ loadError.message }}</p>
 }
 
-<div style="padding:10px;">
+<div>
   <div nz-row [nzGutter]="10">
-    <div nz-col [nzSpan]="11">
+    <div nz-col [nzSpan]="12">
       <nz-card nzTitle="Charging stations">
         <nz-table
           #chargingStationsTable
           [nzData]="store.chargingStations()"
           [nzLoading]="store.isLoading()"
-          [nzFrontPagination]="false"
+          [nzFrontPagination]="true"
+          [nzPageSize]="12"
           nzBordered
         >
           <thead>
@@ -34,13 +35,14 @@
       </nz-card>
     </div>
 
-    <div nz-col [nzSpan]="11">
+    <div nz-col [nzSpan]="12">
       <nz-card nzTitle="Parking lorries">
         <nz-table
           #parkingLorriesTable
           [nzData]="store.parkingLorries()"
           [nzLoading]="store.isLoadingParkingLorriesEntries()"
-          [nzFrontPagination]="false"
+          [nzFrontPagination]="true"
+          [nzPageSize]="12"
           nzBordered
         >
           <thead>
