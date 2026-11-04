@@ -19,6 +19,7 @@
             <th>Title</th>
             <th>Latitude</th>
             <th>Longitude</th>
+            <th>Details</th>
           </tr>
           </thead>
 
@@ -28,6 +29,21 @@
                 <td>{{ station.title }}</td>
                 <td>{{ station.coordinate.lat }}</td>
                 <td>{{ station.coordinate.long }}</td>
+                <td>
+                  <button
+                    nz-button
+                    nzType="text"
+                    nzSize="small"
+                    nzShape="circle"
+                    nz-popover
+                    nzPopoverTrigger="click"
+                    [nzPopoverTitle]="station.title"
+                    [nzPopoverContent]="station.description.join(' · ') || 'No details available'"
+                    [attr.aria-label]="'Show details for ' + station.title"
+                  >
+                    <nz-icon nzType="info-circle" />
+                  </button>
+                </td>
               </tr>
             }
           </tbody>
