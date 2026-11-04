@@ -7,6 +7,8 @@ import { en_US, provideNzI18n } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { provideNzDateFnsAdapter } from 'ng-zorro-antd/core/time';
+import { InfoCircleOutline } from '@ant-design/icons-angular/icons';
+import { provideNzIcons } from 'ng-zorro-antd/icon';
 
 registerLocaleData(en);
 
@@ -17,5 +19,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideNzI18n(en_US),
     provideNzDateFnsAdapter(),
+    provideNzIcons([InfoCircleOutline]),
   ],
 };
