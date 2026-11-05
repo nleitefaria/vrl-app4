@@ -4,7 +4,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 import { ChargingStationsPlStore } from '././charging-stations-pl.store';
 
@@ -17,11 +17,24 @@ import { ChargingStationsPlStore } from '././charging-stations-pl.store';
     NzGridModule,
     NzButtonModule,
     NzIconModule,
-    NzPopoverModule,
+    NzModalModule,
   ],
   providers: [ChargingStationsPlStore],
   templateUrl: './charging-stations-pl.component.html',
 })
 export class ChargingStationsPlComponent {
   readonly store = inject(ChargingStationsPlStore);
+  detailsModalVisible = false;
+  detailsTitle = '';
+  detailsDescription: string[] = [];
+
+  showDetails(title: string, description: string[]): void {
+    this.detailsTitle = title;
+    this.detailsDescription = description;
+    this.detailsModalVisible = true;
+  }
+
+  closeDetails(): void {
+    this.detailsModalVisible = false;
+  }
 }

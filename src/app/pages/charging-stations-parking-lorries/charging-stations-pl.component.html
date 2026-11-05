@@ -35,10 +35,7 @@
                     nzType="text"
                     nzSize="small"
                     nzShape="circle"
-                    nz-popover
-                    nzPopoverTrigger="click"
-                    [nzPopoverTitle]="station.title"
-                    [nzPopoverContent]="station.description.join(' · ') || 'No details available'"
+                    (click)="showDetails(station.title, station.description)"
                     [attr.aria-label]="'Show details for ' + station.title"
                   >
                     <nz-icon nzType="info-circle" />
@@ -66,6 +63,7 @@
             <th>Title</th>
             <th>Latitude</th>
             <th>Longitude</th>
+            <th>Details</th>
           </tr>
           </thead>
 
@@ -75,6 +73,18 @@
                 <td>{{ park.title }}</td>
                 <td>{{ park.coordinate.lat }}</td>
                 <td>{{ park.coordinate.long }}</td>
+                <td>
+                  <button
+                    nz-button
+                    nzType="text"
+                    nzSize="small"
+                    nzShape="circle"
+                    (click)="showDetails(park.title, park.description)"
+                    [attr.aria-label]="'Show details for ' + park.title"
+                  >
+                    <nz-icon nzType="info-circle" />
+                  </button>
+                </td>
               </tr>
             }
           </tbody>
@@ -82,4 +92,21 @@
       </nz-card>
     </div>
   </div>
+
+  <nz-modal
+    [(nzVisible)]="detailsModalVisible"
+    [nzTitle]="detailsTitle"
+    [nzFooter]="null"
+    (nzOnCancel)="closeDetails()"
+  >
+    @if (detailsDescription.length > 0) {
+      <ul>
+        @for (detail of detailsDescription; track $index) {
+          <li>{{ detail }}</li>
+        }
+      </ul>
+    } @else {
+      <p>No details available</p>
+    }
+  </nz-modal>
 </div>
