@@ -6,6 +6,7 @@ import { NzButtonComponent } from 'ng-zorro-antd/button';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { HighwaysStore } from './highways.store';
 import { ChargingStationsPlComponent } from '../charging-stations-parking-lorries/charging-stations-pl.component';
+import { ClosuresWarningsComponent } from '../closures-warnings/closures-warnings.component';
 
 @Component({
   selector: 'app-highways',
@@ -17,6 +18,7 @@ import { ChargingStationsPlComponent } from '../charging-stations-parking-lorrie
     NzButtonComponent,
     NzTabsModule,
     ChargingStationsPlComponent,
+    ClosuresWarningsComponent,
   ],
   providers: [HighwaysStore],
   templateUrl: './highways.component.html',

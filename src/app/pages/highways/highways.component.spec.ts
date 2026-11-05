@@ -1,6 +1,9 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { ChargingStationsPlComponent } from '../charging-stations-parking-lorries/charging-stations-pl.component';
+import { ClosuresWarningsComponent } from '../closures-warnings/closures-warnings.component';
 import { HighwaysComponent } from './highways.component';
 
 describe('HighwaysComponent', () => {
@@ -8,7 +11,16 @@ describe('HighwaysComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HighwaysComponent],
       providers: [provideHttpClient(), provideHttpClientTesting()],
-    }).compileComponents();
+    })
+      .overrideComponent(HighwaysComponent, {
+        remove: {
+          imports: [ChargingStationsPlComponent, ClosuresWarningsComponent],
+        },
+        add: {
+          schemas: [CUSTOM_ELEMENTS_SCHEMA],
+        },
+      })
+      .compileComponents();
   });
 
   afterEach(() => {
