@@ -1,0 +1,70 @@
+@if (store.closuresError(); as loadError) {
+  <p role="alert">Could not load closures: {{ loadError.message }}</p>
+}
+@if (store.warningsError(); as loadError) {
+  <p role="alert">Could not load warnings: {{ loadError.message }}</p>
+}
+
+<nz-card nzTitle="Closures and warnings">
+  <nz-table
+    #closuresWarningsTable
+    [nzData]="store.records()"
+    [nzLoading]="store.isLoading()"
+    [nzFrontPagination]="true"
+    [nzPageSize]="12"
+    nzBordered
+  >
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Title</th>
+        <th>Direction</th>
+        <th>Status</th>
+        <th>Start date</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (record of closuresWarningsTable.data; track record.recordType + '-' + record.id) {
+        <tr>
+          <td>{{ record.recordType }}</td>
+          <td>{{ record.title }}</td>
+          <td>{{ record.subtitle || '—' }}</td>
+          <td>
+            {{ record.blocked ? 'Blocked' : record.future ? 'Upcoming' : 'Active' }}
+          </td>
+          <td>{{ record.startDate || '—' }}</td>
+          <td>
+            <button
+              nz-button
+              nzType="text"
+              nzSize="small"
+              nzShape="circle"
+              (click)="showDetails(record.title, record.description)"
+              [attr.aria-label]="'Show details for ' + record.title"
+            >
+              <nz-icon nzType="info-circle" />
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<nz-modal
+  [(nzVisible)]="detailsModalVisible"
+  [nzTitle]="detailsTitle"
+  [nzFooter]="null"
+  (nzOnCancel)="closeDetails()"
+>
+  @if (detailsDescription.length > 0) {
+    <ul>
+      @for (detail of detailsDescription; track $index) {
+        <li>{{ detail }}</li>
+      }
+    </ul>
+  } @else {
+    <p>No details available</p>
+  }
+</nz-modal>

@@ -1,12 +1,7 @@
 @if (store.error(); as loadError) {
   <p role="alert">Could not load highways: {{ loadError.message }}</p>
 }
-<form
-  nz-form
-  nzLayout="inline"
-  style="margin-bottom: 24px"
-  (ngSubmit)="submitForm()"
->
+<form nz-form nzLayout="inline" style="margin-bottom: 24px" (ngSubmit)="submitForm()">
   <nz-form-item>
     <nz-form-label>Highway</nz-form-label>
     <nz-form-control nzErrorTip="Please select an option">
@@ -36,8 +31,10 @@
 </form>
 
 <nz-tabs nzType="card">
-    <nz-tab [nzTitle]="'Closures and warnings'">Content of Tab Pane tab1</nz-tab>
-    <nz-tab [nzTitle]="'Charging stations and parking lorries'">
-      <app-charging-stations />
-    </nz-tab>
+  <nz-tab [nzTitle]="'Closures and warnings'">
+    <app-closures-warnings />
+  </nz-tab>
+  <nz-tab [nzTitle]="'Charging stations and parking lorries'">
+    <app-charging-stations />
+  </nz-tab>
 </nz-tabs>
