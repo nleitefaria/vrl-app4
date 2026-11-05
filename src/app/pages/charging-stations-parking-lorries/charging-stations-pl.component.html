@@ -66,6 +66,7 @@
             <th>Title</th>
             <th>Latitude</th>
             <th>Longitude</th>
+            <th>Details</th>
           </tr>
           </thead>
 
@@ -75,6 +76,21 @@
                 <td>{{ park.title }}</td>
                 <td>{{ park.coordinate.lat }}</td>
                 <td>{{ park.coordinate.long }}</td>
+                <td>
+                  <button
+                    nz-button
+                    nzType="text"
+                    nzSize="small"
+                    nzShape="circle"
+                    nz-popover
+                    nzPopoverTrigger="click"
+                    [nzPopoverTitle]="park.title"
+                    [nzPopoverContent]="park.description.join(' · ') || 'No details available'"
+                    [attr.aria-label]="'Show details for ' + park.title"
+                  >
+                    <nz-icon nzType="info-circle" />
+                  </button>
+                </td>
               </tr>
             }
           </tbody>
