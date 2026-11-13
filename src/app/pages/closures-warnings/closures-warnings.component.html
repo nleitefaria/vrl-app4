@@ -58,22 +58,24 @@
   [nzFooter]="null"
   (nzOnCancel)="closeDetails()"
 >
-  @if (selectedRecord; as record) {
-    <p><strong>Type:</strong> {{ record.recordType }}</p>
-    <p><strong>Direction:</strong> {{ record.subtitle || '—' }}</p>
-    <p>
-      <strong>Status:</strong>
-      {{ record.blocked ? 'Blocked' : record.future ? 'Upcoming' : 'Active' }}
-    </p>
-    <p><strong>Start date:</strong> {{ record.startDate || '—' }}</p>
-    @if (record.description?.length) {
-      <ul>
-        @for (detail of record.description; track $index) {
-          <li>{{ detail }}</li>
-        }
-      </ul>
-    } @else {
-      <p>No details available</p>
+  <ng-container *nzModalContent>
+    @if (selectedRecord; as record) {
+      <p><strong>Type:</strong> {{ record.recordType }}</p>
+      <p><strong>Direction:</strong> {{ record.subtitle || '—' }}</p>
+      <p>
+        <strong>Status:</strong>
+        {{ record.blocked ? 'Blocked' : record.future ? 'Upcoming' : 'Active' }}
+      </p>
+      <p><strong>Start date:</strong> {{ record.startDate || '—' }}</p>
+      @if (record.description?.length) {
+        <ul>
+          @for (detail of record.description; track $index) {
+            <li>{{ detail }}</li>
+          }
+        </ul>
+      } @else {
+        <p>No details available</p>
+      }
     }
-  }
+  </ng-container>
 </nz-modal>

@@ -99,18 +99,20 @@
     [nzFooter]="null"
     (nzOnCancel)="closeDetails()"
   >
-    @if (detailsCoordinate; as coordinate) {
-      <p><strong>Latitude:</strong> {{ coordinate.lat }}</p>
-      <p><strong>Longitude:</strong> {{ coordinate.long }}</p>
-    }
-    @if (detailsDescription.length > 0) {
-      <ul>
-        @for (detail of detailsDescription; track $index) {
-          <li>{{ detail }}</li>
-        }
-      </ul>
-    } @else {
-      <p>No details available</p>
-    }
+    <ng-container *nzModalContent>
+      @if (detailsCoordinate; as coordinate) {
+        <p><strong>Latitude:</strong> {{ coordinate.lat }}</p>
+        <p><strong>Longitude:</strong> {{ coordinate.long }}</p>
+      }
+      @if (detailsDescription.length > 0) {
+        <ul>
+          @for (detail of detailsDescription; track $index) {
+            <li>{{ detail }}</li>
+          }
+        </ul>
+      } @else {
+        <p>No details available</p>
+      }
+    </ng-container>
   </nz-modal>
 </div>
