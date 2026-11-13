@@ -15,12 +15,12 @@
           nzBordered
         >
           <thead>
-          <tr>
-            <th>Title</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th nzWidth="1%">Details</th>
-          </tr>
+            <tr>
+              <th>Title</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th nzWidth="1%">Details</th>
+            </tr>
           </thead>
 
           <tbody>
@@ -35,7 +35,7 @@
                     nzType="text"
                     nzSize="small"
                     nzShape="circle"
-                    (click)="showDetails(station.title, station.description)"
+                    (click)="showDetails(station.title, station.description, station.coordinate)"
                     [attr.aria-label]="'Show details for ' + station.title"
                   >
                     <nz-icon nzType="info-circle" />
@@ -59,12 +59,12 @@
           nzBordered
         >
           <thead>
-          <tr>
-            <th>Title</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th nzWidth="1%">Details</th>
-          </tr>
+            <tr>
+              <th>Title</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th nzWidth="1%">Details</th>
+            </tr>
           </thead>
 
           <tbody>
@@ -79,7 +79,7 @@
                     nzType="text"
                     nzSize="small"
                     nzShape="circle"
-                    (click)="showDetails(park.title, park.description)"
+                    (click)="showDetails(park.title, park.description, park.coordinate)"
                     [attr.aria-label]="'Show details for ' + park.title"
                   >
                     <nz-icon nzType="info-circle" />
@@ -99,14 +99,20 @@
     [nzFooter]="null"
     (nzOnCancel)="closeDetails()"
   >
-    @if (detailsDescription.length > 0) {
-      <ul>
-        @for (detail of detailsDescription; track $index) {
-          <li>{{ detail }}</li>
-        }
-      </ul>
-    } @else {
-      <p>No details available</p>
-    }
+    <ng-container *nzModalContent>
+      @if (detailsCoordinate; as coordinate) {
+        <p><strong>Latitude:</strong> {{ coordinate.lat }}</p>
+        <p><strong>Longitude:</strong> {{ coordinate.long }}</p>
+      }
+      @if (detailsDescription.length > 0) {
+        <ul>
+          @for (detail of detailsDescription; track $index) {
+            <li>{{ detail }}</li>
+          }
+        </ul>
+      } @else {
+        <p>No details available</p>
+      }
+    </ng-container>
   </nz-modal>
 </div>

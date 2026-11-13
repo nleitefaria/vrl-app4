@@ -4,7 +4,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzTableModule } from 'ng-zorro-antd/table';
-import { ClosuresWarningsStore } from './closures-warnings.store';
+import { ClosuresWarningsStore, type ClosureWarningRecord } from './closures-warnings.store';
 
 @Component({
   selector: 'app-closures-warnings',
@@ -16,16 +16,15 @@ import { ClosuresWarningsStore } from './closures-warnings.store';
 export class ClosuresWarningsComponent {
   readonly store = inject(ClosuresWarningsStore);
   detailsModalVisible = false;
-  detailsTitle = '';
-  detailsDescription: string[] = [];
+  selectedRecord: ClosureWarningRecord | null = null;
 
-  showDetails(title: string, description: string[] = []): void {
-    this.detailsTitle = title;
-    this.detailsDescription = description;
+  showDetails(record: ClosureWarningRecord): void {
+    this.selectedRecord = record;
     this.detailsModalVisible = true;
   }
 
   closeDetails(): void {
     this.detailsModalVisible = false;
+    this.selectedRecord = null;
   }
 }

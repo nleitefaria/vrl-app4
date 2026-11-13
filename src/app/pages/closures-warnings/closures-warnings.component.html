@@ -40,7 +40,7 @@
               nzType="text"
               nzSize="small"
               nzShape="circle"
-              (click)="showDetails(record.title, record.description)"
+              (click)="showDetails(record)"
               [attr.aria-label]="'Show details for ' + record.title"
             >
               <nz-icon nzType="info-circle" />
@@ -54,17 +54,28 @@
 
 <nz-modal
   [(nzVisible)]="detailsModalVisible"
-  [nzTitle]="detailsTitle"
+  [nzTitle]="selectedRecord?.title ?? ''"
   [nzFooter]="null"
   (nzOnCancel)="closeDetails()"
 >
-  @if (detailsDescription.length > 0) {
-    <ul>
-      @for (detail of detailsDescription; track $index) {
-        <li>{{ detail }}</li>
+  <ng-container *nzModalContent>
+    @if (selectedRecord; as record) {
+      <p><strong>Type:</strong> {{ record.recordType }}</p>
+      <p><strong>Direction:</strong> {{ record.subtitle || '—' }}</p>
+      <p>
+        <strong>Status:</strong>
+        {{ record.blocked ? 'Blocked' : record.future ? 'Upcoming' : 'Active' }}
+      </p>
+      <p><strong>Start date:</strong> {{ record.startDate || '—' }}</p>
+      @if (record.description?.length) {
+        <ul>
+          @for (detail of record.description; track $index) {
+            <li>{{ detail }}</li>
+          }
+        </ul>
+      } @else {
+        <p>No details available</p>
       }
-    </ul>
-  } @else {
-    <p>No details available</p>
-  }
+    }
+  </ng-container>
 </nz-modal>
