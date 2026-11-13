@@ -11,14 +11,7 @@ import { ChargingStationsPlStore } from '././charging-stations-pl.store';
 @Component({
   selector: 'app-charging-stations',
   standalone: true,
-  imports: [
-    NzTableModule,
-    NzCardModule,
-    NzGridModule,
-    NzButtonModule,
-    NzIconModule,
-    NzModalModule,
-  ],
+  imports: [NzTableModule, NzCardModule, NzGridModule, NzButtonModule, NzIconModule, NzModalModule],
   providers: [ChargingStationsPlStore],
   templateUrl: './charging-stations-pl.component.html',
 })
@@ -27,14 +20,21 @@ export class ChargingStationsPlComponent {
   detailsModalVisible = false;
   detailsTitle = '';
   detailsDescription: string[] = [];
+  detailsCoordinate: { lat: string; long: string } | null = null;
 
-  showDetails(title: string, description: string[]): void {
+  showDetails(
+    title: string,
+    description: string[],
+    coordinate: { lat: string; long: string },
+  ): void {
     this.detailsTitle = title;
     this.detailsDescription = description;
+    this.detailsCoordinate = coordinate;
     this.detailsModalVisible = true;
   }
 
   closeDetails(): void {
     this.detailsModalVisible = false;
+    this.detailsCoordinate = null;
   }
 }
